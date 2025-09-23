@@ -1,0 +1,4 @@
+- name: create simone user
+  authorized_key:
+    user: simone
+    key: "chave pub gerada!"

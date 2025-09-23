@@ -25,7 +25,7 @@
 
   - name: create simone user
     tags: always
-    user:
+     user:
      name: user
      groups: root
 

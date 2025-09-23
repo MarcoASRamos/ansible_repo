@@ -1,0 +1,41 @@
+- name: install apache and php package
+  tags: apache,apache2,httpd
+  package:
+    name: 
+      - "{{ apache_package }}"
+      - "{{ php_pkg }}"
+    state: latest
+
+- name: start http (CentOS)7
+  tags: apache,centos,httpd
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: ansible_distribution == "CentOS"
+
+- name: change email address for admin
+  tags: apache,centos,http
+  lineinfile: 
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerAdmin'
+    line: ServerAdmin somebody@somewhere.net
+  when: ansible_distribution == "CentOS"
+  regtister: httpd
+
+- name: restart httpd (CentOS)
+  tags: apache,centos,http
+  service:
+    name: httpd
+    state: restart
+  when: httpd.changed
+
+
+- name: copy html file
+  tags: apache,httpd
+  copy:
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644

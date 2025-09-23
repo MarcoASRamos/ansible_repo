@@ -105,7 +105,7 @@
   tasks:
 
   - name: install mariadb package
-    tags: mariadb
+    tags: mariadb,db
     package:
       name: 
         - "{{ mariadb_pkg }}"
