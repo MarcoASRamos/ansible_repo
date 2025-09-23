@@ -2,14 +2,14 @@
   tags: apache,apache2,httpd
   package:
     name: 
-      - "{{ apache_package }}"
+      - "{{ apache_pkg }}"
       - "{{ php_pkg }}"
     state: latest
 
-- name: start http (CentOS)7
+- name: start http (CentOS)
   tags: apache,centos,httpd
   service:
-    name: httpd
+    name: "{{ apache_service }}"
     state: started
     enabled: yes
   when: ansible_distribution == "CentOS"
@@ -21,14 +21,15 @@
     regexp: '^ServerAdmin'
     line: ServerAdmin somebody@somewhere.net
   when: ansible_distribution == "CentOS"
-  regtister: httpd
+  notify: restart_apache    # /handler
+#   register: apache
 
-- name: restart httpd (CentOS)
-  tags: apache,centos,http
-  service:
-    name: httpd
-    state: restart
-  when: httpd.changed
+# - name: restart httpd (CentOS)
+#   tags: apache,centos,http
+#   service:
+#     name: "{{ apache_service }}"
+#     state: restart
+#   when: apache.changed
 
 
 - name: copy html file
