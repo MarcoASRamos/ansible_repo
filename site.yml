@@ -1,0 +1,124 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: upadte repo cache (CentOS)
+    tags: always
+    dnf:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: upadte repo cache (Ubuntu)
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create simone user
+    tags: always
+    authorized_key:
+      user: simone
+      key: "chave pub gerada!"
+  
+
+
+- hosts: workstations
+  become: true
+  tasks:
+  
+  -name: install unzip
+    package:
+     name: unzip
+  
+  - name: install terraform
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/1.13.3/terraform_1.13.3_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
+  
+
+
+
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install apache and php package
+    tags: apache,apache2,httpd
+    package:
+      name: 
+        - "{{ apache_package }}"
+        - "{{ php_pkg }}"
+      state: latest
+  
+  - name: start http (CentOS)7
+    tags: apache,centos,httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: change email address for admin
+    tags: apache,centos,http
+    lineinfile: 
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin somebody@somewhere.net
+    when: ansible_distribution == "CentOS"
+    regtister: httpd
+
+  - name: restart httpd (CentOS)
+    tags: apache,centos,http
+    service:
+      name: httpd
+      state: restart
+    when: httpd.changed
+
+
+  - name: copy html file
+    tags: apache,httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: install mariadb package
+    tags: mariadb
+    package:
+      name: 
+        - "{{ mariadb_pkg }}"
+      state: latest
+
+
+- hosts: file_servers
+  become: true
+  tasks:
+
+  - name: install samba package
+    package:
+      tags: samba
+      name: 
+        - "{{ samba_pkg }}"
+      state: latest

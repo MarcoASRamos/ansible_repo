@@ -1,6 +1,12 @@
-[nodes]
-node1 ansible_host=172.20.0.2 ansible_user=ansible ansible_password=ansible
-node2 ansible_host=172.20.0.4 ansible_user=ansible ansible_password=ansible
-node3 ansible_host=172.20.0.5 ansible_user=ansible ansible_password=ansible
+[web_servers]
+node1 ansible_host=172.20.0.2 ansible_user=ansible ansible_password=ansible apache_pkg=apache2 php_pkg=libapache2-mod-php
+node4 ansible_host=172.20.0. ansible_user=ansible ansible_password=ansible apache_pkg=httpd php_pkg=php 
 
+[db_servers]
+node2 ansible_host=172.20.0.4 ansible_user=ansible ansible_password=ansible apache_pkg=apache2 php_pkg=libapache2-mod-php
 
+[file_servers]
+node3 ansible_host=172.20.0.5 ansible_user=ansible ansible_password=ansible apache_pkg=apache2 php_pkg=libapache2-mod-php
+
+[workstations]
+control 
